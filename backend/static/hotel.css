@@ -1,0 +1,71 @@
+:root {
+  color-scheme: light;
+  font: 100%/1.5 "Inter", system-ui, sans-serif;
+  color: #182825;
+  background: #f4f7f5;
+  --green: #145b46;
+  --line: #dce6e0;
+  --muted: #4f625c;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; min-height: 100vh; display: grid; grid-template-columns: 15rem minmax(0, 1fr); }
+button, input, select { font: inherit; }
+button { cursor: pointer; border: 1px solid var(--line); border-radius: .55rem; padding: .55rem .85rem; background: #fff; color: inherit; }
+button:hover:not(:disabled) { filter: brightness(.94); }
+button:disabled { opacity: .55; cursor: default; }
+:focus-visible { outline: 3px solid #367c68; outline-offset: 2px; }
+.primary, .danger { color: #fff; background: var(--green); border-color: transparent; font-weight: 650; }
+.danger { background: #a12d3c; }
+.sidebar { background: #142e28; color: #fff; padding: 2rem 1.1rem; }
+.brand { display: flex; gap: .75rem; align-items: center; margin: 0 .4rem 2.6rem; font-size: 1.12rem; font-weight: 750; line-height: 1.25; }
+.brand small { display: block; font-size: .875rem; font-weight: 400; color: #c1d6cc; }
+.mark { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: .65rem; color: #13372d; background: #bde5ce; font-family: Georgia, serif; font-size: 1.55rem; }
+nav { display: grid; gap: .35rem; }
+nav button { text-align: left; background: transparent; color: #dcece4; border-color: transparent; }
+nav button[aria-current] { background: #285045; color: #fff; font-weight: 650; }
+nav button:focus-visible { outline-color: #bde5ce; }
+main { width: min(100%, 93rem); margin: 0 auto; padding: clamp(1rem, 4vw, 3.5rem); }
+.page-header, .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.page-header { margin-bottom: 1.8rem; }
+h1, h2, p { margin: 0; }
+h1 { font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -.045em; line-height: 1.15; }
+h2 { font-size: 1.2rem; letter-spacing: -.02em; }
+.page-header p, .toolbar p { margin-top: .3rem; color: var(--muted); }
+.panel { background: #fff; border: 1px solid var(--line); border-radius: .9rem; overflow: hidden; box-shadow: 0 5px 24px #142e2808; }
+.toolbar { padding: 1.2rem; }
+.tools, .dialog-actions { display: flex; gap: .55rem; flex-wrap: wrap; }
+input, select { min-width: 0; border: 1px solid #afc1b7; border-radius: .5rem; padding: .54rem .65rem; background: #fff; color: inherit; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; font-size: .9rem; white-space: nowrap; }
+th, td { padding: .85rem 1rem; border-top: 1px solid var(--line); }
+th { color: #3b534a; background: #edf4ef; font-weight: 650; }
+tbody tr:hover { background: #f7faf8; }
+.row-actions { display: flex; gap: .4rem; }
+.row-actions button { padding: .28rem .5rem; }
+.row-actions button:last-child { color: #902738; }
+.badge { display: inline-block; padding: .16rem .6rem; border-radius: 2rem; background: #edf0ee; }
+.badge.good { color: #17543c; background: #def3e6; }
+.badge.warn { color: #734406; background: #fff1d6; }
+.badge.stop { color: #8b2535; background: #fae7ea; }
+#list-message { padding: 1.2rem; color: var(--muted); }
+.notice, .dialog-error { padding: .75rem .95rem; border-radius: .55rem; background: #def3e6; margin-bottom: 1rem; }
+.notice.error, .dialog-error { color: #842638; background: #fae7ea; }
+dialog { border: 1px solid var(--line); color: inherit; border-radius: .9rem; padding: 0; width: min(38rem, calc(100% - 1.5rem)); max-height: calc(100dvh - 1.5rem); box-shadow: 0 20px 80px #132a2666; }
+dialog::backdrop { background: #132a2699; }
+.dialog-content { padding: 1.35rem; }
+.dialog-content h2 { margin-bottom: 1rem; font-size: 1.45rem; }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; }
+.fields label { display: grid; gap: .3rem; font-size: .875rem; font-weight: 600; }
+.fields input, .fields select { width: 100%; font-size: 1rem; font-weight: 400; }
+.dialog-actions { justify-content: flex-end; margin-top: 1.25rem; }
+dl { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem; margin: 0; }
+dt { color: var(--muted); }
+dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 52rem) {
+  body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; }
+  .sidebar { padding: .9rem 1rem; }
+  .brand { margin: 0 0 .65rem; }
+  nav { display: flex; flex-wrap: wrap; }
+}
+@media (max-width: 30rem) { .fields { grid-template-columns: 1fr; } .tools input { width: 100%; } }

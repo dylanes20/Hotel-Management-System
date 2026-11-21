@@ -1,0 +1,3 @@
+JavaScript: sintaxis válida
+..........                                                               [100%]
+10 passed in 0.05s

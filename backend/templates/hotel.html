@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recepción · Gestión hotelera</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='hotel.css') }}">
+  <script defer src="{{ url_for('static', filename='hotel.js') }}"></script>
+</head>
+<body data-api="{{ url_for('api.collection', resource='reservations') }}">
+  <aside class="sidebar">
+    <div class="brand"><span class="mark" aria-hidden="true">H</span><span>Recepción<small>Gestión hotelera</small></span></div>
+    <nav aria-label="Gestión hotelera">
+      <button type="button" data-section="reservations" aria-current="page">Reservas</button>
+      <button type="button" data-section="guests">Huéspedes</button>
+      <button type="button" data-section="rooms">Habitaciones</button>
+    </nav>
+  </aside>
+  <main>
+    <header class="page-header">
+      <div><h1 id="section-name">Reservas</h1><p id="section-description">Consulta y gestiona las estancias del hotel.</p></div>
+      <button class="primary" type="button" id="new-reservation" disabled>Nueva reserva</button>
+    </header>
+    <p id="notice" class="notice" role="status" hidden></p>
+    <section class="panel" aria-labelledby="list-title">
+      <div class="toolbar">
+        <div><h2 id="list-title">Listado de reservas</h2><p id="count" aria-live="polite"></p></div>
+        <div class="tools">
+          <input id="search" type="search" placeholder="Buscar en el listado" aria-label="Buscar en el listado" disabled>
+          <button type="button" id="reload">Actualizar</button>
+        </div>
+      </div>
+      <div class="table-wrap" tabindex="0" role="region" aria-labelledby="list-title">
+        <table><thead id="columns"></thead><tbody id="rows"></tbody></table>
+      </div>
+      <p id="list-message" role="status">Cargando registros…</p>
+    </section>
+  </main>
+  <dialog id="reservation-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-content">
+      <h2 id="dialog-title"></h2>
+      <p class="dialog-error" id="dialog-error" role="alert" hidden></p>
+      <dl id="reservation-details" hidden></dl>
+      <form id="reservation-form" hidden>
+        <div class="fields">
+          <label>Huésped<select name="guest_id" required></select></label>
+          <label>Habitación<select name="room_id" required></select></label>
+          <label>Entrada<input name="check_in_date" type="date" min="1000-01-01" max="9999-12-31" required></label>
+          <label>Salida<input name="check_out_date" type="date" min="1000-01-01" max="9999-12-31" required></label>
+          <label>Tarifa por noche<input name="nightly_rate" type="number" min="0" max="99999999.99" step="0.01" required></label>
+          <label>Estado<select name="status" required>
+            <option value="booked">Confirmada</option><option value="checked_in">En estancia</option>
+            <option value="checked_out">Finalizada</option><option value="cancelled">Cancelada</option>
+          </select></label>
+          <label>Entrada real<input name="actual_check_in_date" type="date" min="1000-01-01" max="9999-12-31"></label>
+          <label>Salida real<input name="actual_check_out_date" type="date" min="1000-01-01" max="9999-12-31"></label>
+        </div>
+      </form>
+      <p id="delete-description" hidden></p>
+      <footer class="dialog-actions">
+        <button type="button" id="dialog-close">Cerrar</button>
+        <button type="submit" class="primary" form="reservation-form" id="save-reservation" hidden>Guardar reserva</button>
+        <button type="button" class="danger" id="confirm-delete" hidden>Sí, eliminar</button>
+      </footer>
+    </div>
+  </dialog>
+</body>
+</html>
