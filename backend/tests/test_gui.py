@@ -32,3 +32,24 @@ def test_dashboard_serves_frontend_without_a_database_connection(monkeypatch):
         assert asset.status_code == 200
         assert asset.mimetype == mimetype
         assert asset.data
+
+    assert "Casa Albor" in page
+    assert 'id="guest-form"' in page
+    assert 'id="add-guest"' in page
+    assert 'id="guest-search"' in page
+    assert 'id="availability-message"' in page
+    assert 'id="confirm-cancel"' in page
+    assert 'id="confirm-delete"' in page
+    assert 'id="room-dates"' in page
+    for date_input in ("rooms-check-in", "rooms-check-out"):
+        assert f'type="date" id="{date_input}"' in page
+    for image in (
+        "albor-courtyard.webp", "albor-suite.webp", "albor-room.webp",
+        "albor-individual.webp", "albor-doble.webp", "albor-suite-junior.webp", "albor-familiar.webp",
+    ):
+        path = f"/static/images/{image}"
+        assert path in page
+        asset = client.get(path)
+        assert asset.status_code == 200
+        assert asset.mimetype == "image/webp"
+        assert asset.data[8:12] == b"WEBP"

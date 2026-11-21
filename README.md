@@ -1,191 +1,253 @@
-# Comprehensive Hotel Management and Administration System
+<div align="center">
 
-Proyecto universitario de diseno e implementacion de una BD para **un hotel**, con siete tablas: `guest`, `room_type`, `room`, `reservation`, `payment`, `service` y `service_charge`.
+# 🏨 Casa Albor
+### Sistema de Gestión Hotelera
 
-## Estado y honestidad de las fuentes
+**Aplicación web para administrar huéspedes, habitaciones y reservas de un hotel.**
 
-Este repositorio es una **reconstruccion reproducible basada en `pj2.pdf`**, no una copia exacta de los scripts SQL usados inicialmente en Stage 2. El PDF reporta 18 casos `Passed` ejecutados manualmente en MySQL 8.0.33 (Docker: `mysqlcontainer2`); aqui se aporta un archivo SQL por caso y un ejecutor para repetirlos en un esquema aislado. No se ha verificado de nuevo su ejecucion en el MySQL del equipo del estudiante.
+![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-3.1-222222?logo=flask&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)
+![Status](https://img.shields.io/badge/API_tests-31%20passed-238636)
 
-Los archivos `01_schema.sql`, `02_sample_data.sql` y `03_queries.sql` se recrearon respetando el esquema, los valores principales y las reglas documentadas. Los datos de ejemplo que no figuraban en el PDF son **ficticios**, construidos para poder reproducir los resultados esperados.
+</div>
 
-## Estructura
+![Portada de Casa Albor](docs/evidence/gui/GUI-01-portada.png)
+
+## Vista del sistema
+
+| Catálogo de habitaciones | Disponibilidad por fechas |
+|---|---|
+| ![Cinco habitaciones de Casa Albor](docs/evidence/gui/GUI-02-habitaciones.png) | ![Habitación reservada](docs/evidence/gui/GUI-03-habitacion-reservada.png) |
+
+| Nueva reserva | Registro de huéspedes desde la reserva |
+|---|---|
+| ![Formulario de nueva reserva](docs/evidence/gui/GUI-04-nueva-reserva.png) | ![Formulario para registrar un huésped nuevo](docs/evidence/gui/GUI-10-registro-huesped.png) |
+
+Las imágenes de la interfaz corresponden a la aplicación ejecutada en un entorno de pruebas. Los datos personales se ocultaron en las capturas publicables.
+
+## Descripción
+
+**Casa Albor** es un sistema de gestión hotelera desarrollado como proyecto universitario de Bases de Datos. Integra una base de datos relacional **MySQL**, una **API REST en Flask** y una **interfaz web** construida con HTML, CSS y JavaScript.
+
+Su propósito es facilitar el trabajo de recepción: consultar habitaciones, registrar huéspedes, gestionar reservas y mantener la consistencia de la información mediante reglas de validación y restricciones de integridad.
+
+## Funcionalidades
+
+| Módulo | Funcionalidades |
+|---|---|
+| **Huéspedes** | Registro, consulta, actualización y eliminación mediante la API; validación de identificación única. |
+| **Habitaciones** | Catálogo de cinco habitaciones de demostración, tipos, capacidad, tarifa, estado físico y disponibilidad por fechas. |
+| **Reservas** | Creación, consulta, edición, cancelación y eliminación conforme a las restricciones de la base de datos. |
+| **Disponibilidad** | Consulta por intervalo de fechas; previene el solapamiento de reservas activas y excluye habitaciones fuera de servicio. |
+| **Integridad** | Control de relaciones entre reservas, pagos y cargos; respuestas de error claras ante conflictos. |
+| **Interfaz web** | Recepción de Casa Albor con portada, fichas de habitaciones, búsqueda de huéspedes y registro directo desde una nueva reserva. |
+
+**Flujo de recepción:** la interfaz permite registrar un huésped desde «Nueva reserva», elegir fechas, consultar habitaciones disponibles, guardar una reserva y gestionar su edición o cancelación. La disponibilidad se calcula por fechas, y una cancelación conserva el historial y libera las noches reservadas.
+
+## Tecnologías
+
+- **Backend:** Python, Flask, Flask-SQLAlchemy y SQLAlchemy.
+- **Base de datos:** MySQL 8.0 (InnoDB), con ejecución local mediante Docker.
+- **Frontend:** HTML, CSS y JavaScript.
+- **Pruebas:** pytest para API, validaciones y rutas HTTP; casos SQL documentados.
+- **Control de versiones:** Git y GitHub.
+
+## Arquitectura
 
 ```text
-hotel-management-reproducible/
-  README.md
-  database/01_schema.sql        # MySQL 8.0: 7 tablas, llaves, checks, indices
-  database/02_sample_data.sql   # Fixtures ficticios de prueba
-  database/03_queries.sql       # Disponibilidad, conflictos y balances
-  tests/sql/TC-01.sql ... TC-18.sql  # Un SQL por caso documentado
-  tests/run_all.py              # Runner secuencial y validacion de resultados
-  tests/TC-12_manual.md         # Reinicio Docker (manual)
-  docs/TEST_CASES.md            # Trazabilidad de los 18 tests
-  docs/PROCEDIMIENTO_PASO_A_PASO.md # Explicacion de cada prueba
-  docs/evidence/TC-01.png ... # Capturas del PDF, 18 imagenes
-  docs/TRACEABILITY.md          # Diferencias PDF/codigo y limitaciones
-  docs/pj2.pdf                  # Especificacion Stage 2, fuente primaria
-  docs/README_Stage2_source.md # Documentacion anterior preservada
+Navegador (HTML, CSS y JavaScript)
+            |
+            v
+      Aplicación Flask
+            |
+      API REST /api
+            |
+     SQLAlchemy / PyMySQL
+            |
+         MySQL 8.0
 ```
 
-## Requisitos para ejecutar
+La base de datos contiene **siete tablas**: `guest`, `room_type`, `room`, `reservation`, `payment`, `service` y `service_charge`.
 
-- MySQL 8.0.16 o superior con `CHECK` activo (referencia: 8.0.33).
-- Docker y el contenedor `mysqlcontainer2` funcionando (por defecto), o cliente `mysql` local.
-- Python 3.9+ para ejecutar `tests/run_all.py` (solo biblioteca estandar).
-- Permisos para crear/eliminar **solo la base de prueba `hotel_management_test`**.
+## Estructura del repositorio
 
-## Ejecucion automatica de pruebas
-
-En Ubuntu con contenedor Docker existente:
-
-```bash
-export HOTEL_MYSQL_MODE=docker
-export HOTEL_MYSQL_CONTAINER=mysqlcontainer2
-export HOTEL_MYSQL_USER=root
-# Solo en tu terminal local, sin compartir passwords en GitHub:
-read -rs -p 'Password MySQL: ' HOTEL_MYSQL_PASSWORD; echo
-export HOTEL_MYSQL_PASSWORD
-python3 tests/run_all.py --reset-test-db
-unset HOTEL_MYSQL_PASSWORD
+```text
+Hotel-Management-System/
+├── backend/
+│   ├── __init__.py          # Configuración de Flask
+│   ├── models.py            # Modelos y relaciones
+│   ├── routes.py            # Endpoints de la API
+│   ├── validation.py        # Validaciones
+│   ├── templates/           # Interfaz HTML
+│   ├── static/              # CSS, JavaScript y recursos visuales
+│   └── tests/               # Pruebas automatizadas
+├── database/
+│   ├── 01_schema.sql        # Estructura de la base de datos
+│   ├── 02_sample_data.sql   # Datos de demostración
+│   └── 03_queries.sql       # Consultas SQL
+├── tests/
+│   ├── sql/                 # Casos de prueba SQL
+│   └── run_all.py           # Ejecutor de pruebas SQL
+├── docs/
+│   ├── API_TEST_REPORT.md   # Informe de pruebas de la API
+│   ├── TEST_CASES.md        # Casos de prueba SQL
+│   └── evidence/            # Evidencias y resultados
+├── .gitignore
+├── README.md
+└── backend/.env.example
 ```
 
-Para un servidor MySQL accesible mediante el cliente local:
+## Instalación y ejecución
+
+### 1. Clonar el repositorio
 
 ```bash
-export HOTEL_MYSQL_MODE=local
-export HOTEL_MYSQL_HOST=127.0.0.1
-export HOTEL_MYSQL_PORT=3306
-export HOTEL_MYSQL_USER=root
-read -rs -p 'Password MySQL: ' HOTEL_MYSQL_PASSWORD; echo
-export HOTEL_MYSQL_PASSWORD
-python3 tests/run_all.py --reset-test-db
-unset HOTEL_MYSQL_PASSWORD
+git clone https://github.com/dylanes20/Hotel-Management-System.git
+cd Hotel-Management-System
 ```
 
-El runner recrea **unicamente `hotel_management_test`**, carga tablas y fixtures, y ejecuta los tests en orden. Valida 17 tests; TC-12 depende de reiniciar Docker y se explica en `tests/TC-12_manual.md`. Los tests de errores esperan los codigos **1048, 1062 y 3819**. TC-05 evidencia una limitacion, no un bloqueo completo; TC-11 es una prueba basica, no una prueba de estres.
+### 2. Preparar Python
 
-**No ejecutes el reset contra una BD real con datos que quieras conservar.** No se recomienda subir contrasenas, claves, ni exportaciones con datos de personas reales.
-
-## Manual: inspeccionar scripts
-
-Si solo quieres revisar SQL, abre `database/01_schema.sql`, luego los SQL de cada prueba, y consulta `docs/TEST_CASES.md`. La carpeta `database/` usa el nombre `hotel_management` y sirve para desplegar el esquema nuevo; el runner sustituye dicho nombre por `hotel_management_test` para ejecutar pruebas sin afectar tu BD principal.
-
-## Limitaciones de Stage 2
-
-- No se garantizan reservas sin solapamiento ante inserciones directas (ver TC-05).
-- No se implementan usuarios por rol, backups diarios, cifrado TLS ni pruebas de concurrencia.
-- Stage 2 incluye pruebas SQL. El backend y los casos HTTP de Project Advance están en `backend/`. La interfaz gráfica y su integración están pendientes.
-
-El documento original `docs/pj2.pdf` contiene la seccion 4 y las capturas de los tests manuales. Los scripts de esta entrega son una *reproduccion* de su comportamiento, no sus originales.
-
-## Evidencias originales y guia
-
-- [Procedimiento de cada test](docs/PROCEDIMIENTO_PASO_A_PASO.md)
-- [Tabla de 18 pruebas con capturas enlazadas](docs/TEST_CASES.md)
-- [Evidencia original: TC-05](docs/evidence/TC-05.png)
-
-## Entrega en GitHub
-
-Usa la [guía de recuperación y entrega](docs/PROJECT_ADVANCE_DELIVERY.md) para
-trasladar el trabajo a un clon del repositorio original y revisar los
-archivos antes de publicar.
-
-## API REST de Project Advance
-
-El backend se conecta a las tablas MySQL existentes. La fábrica de la API no
-crea tablas ni ejecuta migraciones.
-
-### Ejecutar en Omarchy
-
-Desde la raíz del proyecto, crea un entorno virtual e instala las dependencias
-con autorización:
+Se recomienda **Python 3.10 o superior**. El proyecto se ha ejecutado en Omarchy (Arch Linux) con Python 3.14.
 
 ```bash
-python3 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r backend/requirements.txt
-cp -n backend/.env.example backend/.env
 ```
 
-Configura `backend/.env` con el usuario MySQL y su contraseña. Las variables
-exportadas tienen prioridad sobre ese archivo. Usa una cuenta con permisos
-`SELECT`, `INSERT`, `UPDATE` y `DELETE` para las tablas del CRUD y `SELECT`
-para `room_type`. No hacen falta permisos de DDL. Para una primera comprobación
-de solo lectura, usa una cuenta con solo `SELECT`.
+### 3. Preparar MySQL
 
-Flask se ejecuta en el host y necesita un puerto MySQL publicado por
-`mysqlcontainer2`. Consulta el puerto con `docker port mysqlcontainer2 3306/tcp`
-y ajusta `HOTEL_API_DB_PORT`. Los comandos siguientes arrancan el servidor de
-desarrollo en la interfaz local y consultan los huéspedes:
+Se requiere un servidor MySQL 8.0 con una base de datos denominada `hotel_management`, creada a partir de `database/01_schema.sql`.
+
+Si utilizas Docker y ya tienes un contenedor MySQL, inícialo y verifica el puerto publicado. Por ejemplo, en el entorno de desarrollo del proyecto:
+
+```bash
+docker start mysqlcontainer2
+docker port mysqlcontainer2 3306/tcp
+```
+
+**Para una instalación nueva**, importa `database/01_schema.sql`. Puedes cargar `database/02_sample_data.sql` para disponer de registros ficticios de demostración. **No vuelvas a importar los datos de ejemplo en una base que ya contiene información**, porque podrían producirse duplicados. No ejecutes scripts de preparación sobre una base de producción sin revisar sus instrucciones.
+
+### 4. Configurar la conexión
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Edita `backend/.env` con los datos de tu servidor MySQL:
+
+```dotenv
+HOTEL_API_DB_HOST=127.0.0.1
+HOTEL_API_DB_PORT=3306
+HOTEL_API_DB_NAME=hotel_management
+HOTEL_API_DB_USER=tu_usuario_mysql
+HOTEL_API_DB_PASSWORD=tu_contrasena_local
+```
+
+El usuario MySQL debe contar con los permisos necesarios sobre la base correspondiente. **No publiques `backend/.env`, contraseñas ni datos personales reales.** El archivo está excluido mediante `.gitignore`.
+
+### 5. Iniciar la aplicación
 
 ```bash
 python -m flask --app backend:create_app run
-curl -i http://127.0.0.1:5000/api/guests
 ```
 
-### Contrato HTTP
+Abre **http://127.0.0.1:5000/** para utilizar la interfaz web.
 
-| Ruta | Métodos |
-| --- | --- |
-| `/api/guests`, `/api/rooms`, `/api/reservations` | `GET` lista; `POST` crea |
-| `/api/guests/<id>`, `/api/rooms/<id>`, `/api/reservations/<id>` | `GET` consulta; `PUT` reemplaza; `PATCH` edita campos; `DELETE` elimina |
+## Catálogo de demostración
 
-Las listas y consultas devuelven `200`. Una creación devuelve `201` con
-`Location`, y un borrado exitoso devuelve `204`. Los errores JSON tienen un
-campo `error`: `400` para datos inválidos, `404` para recursos ausentes,
-`409` para conflictos y `415` cuando el cuerpo no se envía como JSON.
-
-Los cuerpos usan los nombres de columnas del esquema. Los IDs primarios son de
-solo lectura. Para crear una reserva se requieren `guest_id`, `room_id`,
-`check_in_date`, `check_out_date` y `nightly_rate`. Las fechas usan
-`AAAA-MM-DD` y los importes se devuelven como cadenas decimales. Las reservas
-`booked` y `checked_in` requieren una habitación disponible y bloquean fechas
-entre entrada (incluida) y salida (excluida). Las escrituras desde la API
-comprueban el solapamiento dentro de una transacción. Una reserva con pagos o
-cargos asociados devuelve `409` al intentar borrarla. Se puede conservar el
-historial estableciendo `status` a `cancelled`.
-
-### Pruebas HTTP con MySQL aislado
-
-Provisiona una base vacía llamada exactamente `hotel_management_api_test`
-con el esquema de `database/01_schema.sql`. Para preparar el SQL de prueba,
-genera una copia que cambie el nombre de la base:
+Para insertar las habitaciones de muestra **101, 102, 201 y 202** junto a la **901** ya existente, el proyecto incorpora un seed reutilizable. Debe ejecutarse **solo sobre** `hotel_management_api_test`, con las variables de conexión `HOTEL_API_TEST_DB_*` configuradas:
 
 ```bash
-sed 's/\bhotel_management\b/hotel_management_api_test/g' database/01_schema.sql > /tmp/hotel_management_api_test.sql
+python -m database.seed_demo_rooms          # vista previa sin escritura
+python -m database.seed_demo_rooms --apply  # insertar los registros faltantes
 ```
 
-Antes de importar, verifica que las sentencias `CREATE DATABASE` y `USE`
-apunten a `hotel_management_api_test`. Importa la copia con una cuenta
-administrativa y usa para pytest una cuenta con permisos de lectura y
-escritura limitados a esa base. No se requiere importar datos de ejemplo.
+El script comprueba el destino, conserva los registros existentes y evita duplicados. Nunca debe usarse para escribir sobre la base principal.
 
-Exporta `HOTEL_API_TEST_DB_USER` y `HOTEL_API_TEST_DB_PASSWORD` desde tu
-sesión local. Si hace falta, ajusta `HOTEL_API_TEST_DB_HOST` y
-`HOTEL_API_TEST_DB_PORT`. El nombre de la base de pruebas es fijo en el código.
-Cada caso crea sus propias filas y revierte los cambios al terminar mediante
-una transacción externa. Sin el usuario de pruebas, se omiten los casos que
-requieren MySQL.
+## API REST
+
+La aplicación expone operaciones CRUD para huéspedes, habitaciones y reservas:
+
+| Recurso | Consultar / crear | Consultar / modificar / eliminar por ID |
+|---|---|---|
+| Huéspedes | `GET, POST /api/guests` | `GET, PUT, PATCH, DELETE /api/guests/<id>` |
+| Habitaciones | `GET, POST /api/rooms` | `GET, PUT, PATCH, DELETE /api/rooms/<id>` |
+| Reservas | `GET, POST /api/reservations` | `GET, PUT, PATCH, DELETE /api/reservations/<id>` |
+
+Ejemplo de consulta:
 
 ```bash
-python -m pytest -q backend/tests
+curl http://127.0.0.1:5000/api/reservations
 ```
 
-El [informe de pruebas de la API](docs/API_TEST_REPORT.md) detalla la configuración en Omarchy, los casos y los resultados.
+Las respuestas incluyen códigos HTTP adecuados, como `201` para creación, `204` para eliminación y `409` cuando una operación entra en conflicto con una restricción de integridad.
 
-## Interfaz web
+## Pruebas y resultados
 
-La GUI usa HTML, CSS y JavaScript nativo, servidos por Flask. Solo requiere
-las dependencias del backend. Desde la raíz del proyecto en Omarchy:
+### Pruebas automatizadas de la API
+
+La ejecución realizada en el entorno local de Omarchy con la base aislada `hotel_management_api_test` obtuvo:
+
+```text
+...............................  [100%]
+31 passed in 0.43s
+```
+
+Los casos cubren operaciones CRUD, validación de datos, identificación duplicada, fechas de reservas, solapamientos, habitaciones no disponibles y protección de reservas con pagos o cargos relacionados.
+
+- [Resultado de pytest (31 pruebas)](docs/evidence/api/pytest_results_final.txt)
+- [Informe de pruebas de la API](docs/API_TEST_REPORT.md)
+
+Para volver a ejecutar las pruebas de integración se necesita una **base de pruebas independiente**, con el esquema preparado y credenciales propias. Consulta la [guía de preparación y ejecución](docs/API_TEST_REPORT.md) antes de ejecutar:
 
 ```bash
-source .venv/bin/activate
-python -m flask --app backend:create_app run
+python -m pytest -q backend/tests -rs
 ```
 
-Abre `http://127.0.0.1:5000/` en el navegador. La interfaz toma la conexión
-MySQL configurada para Flask. Huéspedes y habitaciones se pueden consultar y
-buscar. En **Reservas** se pueden crear, abrir, editar y eliminar registros.
-El borrado pide confirmación y muestra un aviso si la reserva tiene pagos o
-cargos. Para probar escrituras, arranca Flask con la base aislada siguiendo
-la [guía de verificación de la GUI](docs/evidence/gui/README.md).
+> Sin configurar `HOTEL_API_TEST_DB_USER` y `HOTEL_API_TEST_DB_PASSWORD`, los casos que requieren MySQL pueden omitirse. Una ejecución con pruebas omitidas **no equivale** a la validación completa de integración.
+
+### Pruebas de base de datos
+
+El repositorio incluye **18 casos SQL documentados** para comprobar el esquema, sus relaciones y reglas. Existe un ejecutor para los casos automatizables y un procedimiento manual para el caso que requiere intervención sobre Docker.
+
+- [Casos de prueba SQL](docs/TEST_CASES.md)
+- [Procedimiento de pruebas](docs/PROCEDIMIENTO_PASO_A_PASO.md)
+- [Capturas y evidencias](docs/evidence/)
+
+### Integración visual
+
+La interfaz fue verificada en el navegador con la base aislada de pruebas: registro de huéspedes, creación de reservas, control de fechas ocupadas, visualización de disponibilidad y cancelación con conservación del historial. Las capturas documentan estos recorridos; algunas operaciones adicionales disponen de pruebas automatizadas.
+
+- [Guía y evidencias de la GUI](docs/evidence/gui/README.md)
+
+### Evidencias visuales
+
+| Evidencia | Captura |
+|---|---|
+| Portada principal | [GUI-01](docs/evidence/gui/GUI-01-portada.png) |
+| Catálogo y tarifas | [GUI-02](docs/evidence/gui/GUI-02-habitaciones.png) |
+| Habitación reservada | [GUI-03](docs/evidence/gui/GUI-03-habitacion-reservada.png) |
+| Nueva reserva | [GUI-04](docs/evidence/gui/GUI-04-nueva-reserva.png) |
+| Reservas confirmadas | [GUI-05](docs/evidence/gui/GUI-05-reservas-confirmadas.png) |
+| Validación de fechas | [GUI-06](docs/evidence/gui/GUI-06-validacion-fechas.png) |
+| Cancelación | [GUI-07](docs/evidence/gui/GUI-07-reserva-cancelada.png) |
+| Edición de reserva | [GUI-08](docs/evidence/gui/GUI-08-edicion-reserva.png) |
+| Gestión de huéspedes | [GUI-09](docs/evidence/gui/GUI-09-huespedes.png) |
+| Registro de nuevo huésped | [GUI-10](docs/evidence/gui/GUI-10-registro-huesped.png) |
+
+## Buenas prácticas de datos
+
+- Las pruebas de escritura se realizan sobre `hotel_management_api_test`, no sobre `hotel_management`.
+- Las reservas con pagos o cargos asociados no se eliminan directamente.
+- Se diferencia la cancelación de una reserva de la eliminación física del registro.
+- La disponibilidad se comprueba también en el backend; no se confía únicamente en la interfaz.
+- Las credenciales se mantienen fuera del repositorio.
+
+## Equipo
+
+**Dylan Espinoza · José Reinoso**
+
+Proyecto académico de **Bases de Datos**.

@@ -5,7 +5,7 @@
 | Esquema y scripts SQL | Disponibles en `database/`. El informe Stage 2 y sus capturas originales están en `docs/`. |
 | API CRUD | Implementada para huéspedes, habitaciones y reservas en `backend/`. |
 | Pruebas API | [Informe](API_TEST_REPORT.md) y [resultado de Omarchy](evidence/api/pytest_results.txt). 22 aprobadas en MySQL aislado. |
-| GUI con eliminación de reservas | Implementada y servida por Flask. [Comprobación local](evidence/gui/smoke-flask.txt). |
+| GUI con eliminación de reservas | Implementada y servida por Flask. [Comprobación local](evidence/gui/smoke-casa-albor.txt). |
 | Integración GUI, API y MySQL | [Recorrido de verificación](evidence/gui/README.md) pendiente en navegador con MySQL. |
 | README e informe final | README con instrucciones del backend y la GUI. Informe final pendiente de las evidencias de integración. |
 | GitHub | Pendiente recuperar la URL original, revisar los archivos y publicar con autorización. |

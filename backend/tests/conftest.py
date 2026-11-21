@@ -36,23 +36,27 @@ def test_app():
         db.engine.dispose()
 
 
+def verify_test_database(connection):
+    if connection.scalar(text("SELECT DATABASE()")) != TEST_DATABASE:
+        pytest.fail(f"Las pruebas requieren la base {TEST_DATABASE}.")
+
+    tables = dict(connection.execute(text("""
+        SELECT TABLE_NAME, ENGINE
+          FROM information_schema.TABLES
+         WHERE TABLE_SCHEMA = DATABASE()
+    """)).all())
+    for table in db.metadata.tables:
+        if tables.get(table) != "InnoDB":
+            pytest.fail(f"{TEST_DATABASE}.{table} debe existir y usar InnoDB.")
+
+
 @pytest.fixture
 def test_connection(test_app, monkeypatch):
     with test_app.app_context():
         engine = db.engine
         with engine.connect() as connection:
             transaction = connection.begin()
-            if connection.scalar(text("SELECT DATABASE()")) != TEST_DATABASE:
-                pytest.fail(f"Las pruebas requieren la base {TEST_DATABASE}.")
-
-            tables = dict(connection.execute(text("""
-                SELECT TABLE_NAME, ENGINE
-                  FROM information_schema.TABLES
-                 WHERE TABLE_SCHEMA = DATABASE()
-            """)).all())
-            for table in db.metadata.tables:
-                if tables.get(table) != "InnoDB":
-                    pytest.fail(f"{TEST_DATABASE}.{table} debe existir y usar InnoDB.")
+            verify_test_database(connection)
 
             # Las confirmaciones de la API liberan savepoints dentro de esta
             # transacción. El rollback exterior descarta las filas de cada caso.

@@ -8,7 +8,13 @@ from werkzeug.exceptions import BadRequest
 
 ROOM_STATUSES = ("available", "maintenance", "out_of_service")
 ACTIVE_RESERVATION_STATUSES = ("booked", "checked_in")
-RESERVATION_STATUSES = (*ACTIVE_RESERVATION_STATUSES, "checked_out", "cancelled")
+BLOCKING_RESERVATION_STATUSES = (*ACTIVE_RESERVATION_STATUSES, "checked_out")
+RESERVATION_STATUSES = (*BLOCKING_RESERVATION_STATUSES, "cancelled")
+
+
+def validate_stay_dates(check_in, check_out):
+    if check_out <= check_in:
+        raise BadRequest("La salida debe ser posterior a la entrada.")
 
 
 def validated_fields(model, payload, *, replacing=False):

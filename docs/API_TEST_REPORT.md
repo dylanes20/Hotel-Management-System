@@ -185,3 +185,56 @@ set -o pipefail
 python -m pytest -q -rs backend/tests/test_api.py backend/tests/test_http.py 2>&1 |
   tee docs/evidence/api-pytest-mysql.txt
 ```
+
+## Ampliación del flujo de recepción
+
+La ejecución histórica de 22 aprobadas permanece en
+[evidence/api/pytest_results.txt](evidence/api/pytest_results.txt).
+La suite ampliada suma 28 casos. La ejecución actual registró
+**11 aprobados, 0 fallidos y 17 omitidos**. Los omitidos necesitan MySQL
+y se reservan para la base `hotel_management_api_test`.
+[Salida de la ejecución local](evidence/api/pytest-operacion-local.txt).
+
+| Caso | Comprobación | Estado en esta ejecución |
+|---|---|---|
+| API-23 | Fechas ausentes, inválidas o invertidas y exclusión inválida devuelven 400 antes de acceder a MySQL | Aprobado |
+| API-24 | Alta, consulta y edición de huésped, conflictos por documento y correo, reserva con el huésped seleccionado | Omitido |
+| API-25 | Disponibilidad, fechas consecutivas, exclusión al editar, cambio de fechas, cancelación y borrado permitido | Omitido |
+| API-26 | Mantenimiento y fuera de servicio, preservación del intervalo de una estancia finalizada | Omitido |
+| API-27 | Dos solicitudes simultáneas, una sola reserva almacenada, respuestas 201 y 409 | Omitido |
+| GUI-H01 | Flask sirve la página, los controles nuevos y los recursos estáticos sin conectarse a MySQL | Aprobado |
+
+Las pruebas ya existentes de solapamiento al crear y editar, reservas
+consecutivas y borrado restringido por pagos o cargos siguen en la suite.
+El caso concurrente utiliza conexiones distintas. Confirma filas de prueba
+propias y las limpia por ID al terminar. Verifica el nombre del esquema y
+las tablas InnoDB antes de crear o limpiar esos registros.
+
+Después de verificar el destino y autorizar las escrituras de prueba, captura
+la nueva ejecución en Omarchy. Conserva el archivo histórico de 22 casos:
+
+```bash
+source .venv/bin/activate
+: "${HOTEL_API_TEST_DB_USER:?Configura el usuario aislado antes de ejecutar}"
+set -o pipefail
+python -m pytest -q -rs backend/tests 2>&1 | tee docs/evidence/api/pytest-operacion-mysql.txt
+```
+
+## Disponibilidad de habitaciones por intervalo
+
+El [registro de Omarchy](evidence/api/pytest_results_final.txt) conserva las
+**28 pruebas aprobadas en 0,38 s** antes de este cambio. El caso nuevo
+`test_room_overview_reflects_stays_and_physical_status` comprueba en
+`hotel_management_api_test` el nombre del tipo, los intervalos consecutivos,
+los cambios de fechas, la cancelación y la prioridad del estado físico.
+Está pendiente de ejecución contra MySQL. El [registro local](evidence/gui/rooms-availability-local.txt)
+incluye la prueba de las fichas con Node y la ejecución sin MySQL.
+
+## Catálogo de demostración
+
+El [registro local](evidence/gui/demo-catalog-local.txt) incluye la prueba
+JavaScript de la ficha, la verificación de las imágenes de Flask y el caso
+que comprueba que el seed rechaza `hotel_management` antes de acceder a las
+tablas. La prueba de integración del seed verifica previsualización,
+idempotencia, conservación de la 901 y sus reservas, y los datos que devuelve
+la API. Está pendiente de ejecución contra MySQL aislado.
