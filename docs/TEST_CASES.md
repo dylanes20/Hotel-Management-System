@@ -1,4 +1,4 @@
-# Bitacora de 18 Test Cases - reconstruccion a partir de pj2.pdf
+# Bitacora de 18 Test Cases 
 
 **Procedencia**: PDF de Stage 2, seccion 4 y figuras 3-20 (paginas 10-23).
 Este repositorio **no contiene los comandos originales de la consola**: los archivos `tests/sql/TC-XX.sql` son implementaciones reproducibles reconstruidas desde la descripcion y los resultados del informe.
@@ -26,18 +26,3 @@ Los resultados `Passed` pertenecen al informe original; NO se afirma que el codi
 | [TC-17](evidence/TC-17.png) | FR_04: salida igual a entrada | Passed | MySQL error 3819 esperado |
 | [TC-18](evidence/TC-18.png) | FR_07: pago negativo | Passed | MySQL error 3819 esperado |
 
-## Como defender la metodologia
-
-1. **Precondiciones:** cargar un esquema y los registros de ejemplo.
-2. **Accion:** ejecutar los INSERT, UPDATE y SELECT del caso.
-3. **Validacion:** comparar los resultados reales de MySQL con los esperados por el requisito.
-4. **Evidencia:** guardar la salida de la consola y asociarla con el ID del caso.
-5. **Pruebas negativas:** el test pasa si MySQL **rechaza** el dato invalido con el error esperado.
-
-### Diferencia entre las pruebas de Stage 2 y las de Project Advance
-
-Esta carpeta valida el **nivel SQL**. La consigna de Project Advance pide tambien pruebas de la **API HTTP CRUD** y la integracion **GUI-API**, que todavia no estan implementadas en esta reconstruccion. No presentarlas como ya realizadas.
-
-## Capturas originales
-
-Se incluyen recortes de las figuras 3-20 del PDF, conservando las evidencias visuales. Los archivos SQL del repositorio son reconstrucciones: al comparar, el profesor debe distinguir las capturas originales de los comandos reconstruidos.
