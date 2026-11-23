@@ -3,7 +3,7 @@
 ## Resultado confirmado en Omarchy
 
 La [salida de pytest](evidence/api/pytest_results.txt) registra **22 pruebas
-aprobadas, 0 fallidas y 0 omitidas en 0,26 s**. El estudiante ejecutó la suite
+aprobadas, 0 fallidas y 0 omitidas en 0,26 s**. se ejecutó la suite
 contra `hotel_management_api_test` después de corregir el borrado con
 referencias. Este registro precede a la incorporación de la GUI.
 
