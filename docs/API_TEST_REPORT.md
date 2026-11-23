@@ -1,6 +1,6 @@
 # Project Advance · Pruebas automatizadas de la API
 
-## Resultado confirmado en Omarchy
+## Resultado confirmado 
 
 La [salida de pytest](evidence/api/pytest_results.txt) registra **22 pruebas
 aprobadas, 0 fallidas y 0 omitidas en 0,26 s**. se ejecutó la suite
@@ -17,9 +17,7 @@ con `python -m pip check` pasó. pytest recolectó **22 casos**.
 | Suite sin credenciales de integración | 9 | 9 | 0 | 13 |
 
 Los nueve casos aprobados verifican respuestas HTTP y validación de campos
-sin abrir una conexión SQL. Los 13 casos de integración se omitieron en esa ejecución local.
-Esta sesión no puede acceder al socket de Docker ni al puerto de MySQL. La
-ejecución no escribió en ninguna base. El [registro de pytest](evidence/api-pytest-sin-mysql.txt)
+sin abrir una conexión SQL.  El [registro de pytest](evidence/api-pytest-sin-mysql.txt)
 conserva la salida de esta ejecución con la ruta local sustituida por
 `<proyecto>`.
 
