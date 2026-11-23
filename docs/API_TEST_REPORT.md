@@ -7,19 +7,7 @@ aprobadas, 0 fallidas y 0 omitidas en 0,26 s**. se ejecutó la suite
 contra `hotel_management_api_test` después de corregir el borrado con
 referencias. Este registro precede a la incorporación de la GUI.
 
-## Verificación previa sin MySQL
 
-Entorno virtual del proyecto con pytest 9.2.0. La verificación de dependencias
-con `python -m pip check` pasó. pytest recolectó **22 casos**.
-
-| Ejecución | Ejecutados | Aprobados | Fallidos | Omitidos |
-|---|---:|---:|---:|---:|
-| Suite sin credenciales de integración | 9 | 9 | 0 | 13 |
-
-Los nueve casos aprobados verifican respuestas HTTP y validación de campos
-sin abrir una conexión SQL.  El [registro de pytest](evidence/api-pytest-sin-mysql.txt)
-conserva la salida de esta ejecución con la ruta local sustituida por
-`<proyecto>`.
 
 ## Casos y criterios de aceptación
 
