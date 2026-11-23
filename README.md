@@ -189,7 +189,7 @@ Las respuestas incluyen códigos HTTP adecuados, como `201` para creación, `204
 
 ### Pruebas automatizadas de la API
 
-La ejecución realizada en el entorno local de Omarchy con la base aislada `hotel_management_api_test` obtuvo:
+La ejecución realizada en el entorno local con la base aislada `hotel_management_api_test` obtuvo:
 
 ```text
 ...............................  [100%]
